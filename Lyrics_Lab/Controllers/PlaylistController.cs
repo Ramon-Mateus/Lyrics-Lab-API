@@ -14,10 +14,16 @@ namespace Lyrics_Lab.Controllers
         public PlaylistController(ApplicationDbContext applicationDbContext) => _context = applicationDbContext;
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAllPLaylists()
         {
             var playlists = _context.Playlists.ToList();
             return Ok(playlists);
+        }
+
+        [HttpGet("{Id}")]
+        public IActionResult GetPLaylistById(int id) {
+            var playlist = _context.Playlists.FirstOrDefault(x => x.Id == id);
+            return Ok(playlist);
         }
     }
 }
