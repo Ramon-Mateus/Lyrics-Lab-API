@@ -1,4 +1,5 @@
 ﻿using Lyrics_Lab.Contexts;
+using Lyrics_Lab.DTOs;
 using Lyrics_Lab.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +22,36 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetPLaylistById(int id) {
+        public IActionResult GetPLaylistById(int id)
+        {
             var playlist = _context.Playlists.FirstOrDefault(x => x.Id == id);
+
+            if (playlist == null)
+            {
+                return NotFound(id);
+            }
+
             return Ok(playlist);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Playlist>> CreatePlaylist([FromBody] CreatePlaylistDto createPlaylistDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var playlist = new Playlist
+            {
+                Name = createPlaylistDto.Name,
+                Description = createPlaylistDto.Description
+            };
+
+            _context.Playlists.Add(playlist);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetPLaylistById), new { id = playlist.Id }, playlist);
         }
     }
 }
