@@ -6,5 +6,6 @@
         public string Name { get; set; } = string.Empty;
         public string? Lyric { get; set; }
         public DateTime CreatedAt { get; set; }
+        public int? PlaylistId { get; set; }
     }
 }
