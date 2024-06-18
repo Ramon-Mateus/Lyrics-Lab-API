@@ -4,3 +4,8 @@ GET {{Lyrics_Lab_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+GET {{Lyrics_Lab_HostAddress}}/swagger/index.html
+Accept: applocation/html
+
+###

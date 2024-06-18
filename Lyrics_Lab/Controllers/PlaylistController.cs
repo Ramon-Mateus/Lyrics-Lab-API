@@ -1,8 +1,8 @@
 ﻿using Lyrics_Lab.Contexts;
 using Lyrics_Lab.DTOs;
 using Lyrics_Lab.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lyrics_Lab.Controllers
 {
@@ -52,6 +52,28 @@ namespace Lyrics_Lab.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetPLaylistById), new { id = playlist.Id }, playlist);
+        }
+
+        [HttpPut("{Id}")]
+        public async Task<ActionResult<Playlist>> UpdatePlaylist(int Id, [FromBody] UpdatePlaylistDto updatePlaylistDto) {
+            if  (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var playlist = await _context.Playlists.FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (playlist == null)
+            {
+                return NotFound();
+            }
+
+            playlist.Name = updatePlaylistDto.Name;
+            playlist.Description = updatePlaylistDto.Description;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
