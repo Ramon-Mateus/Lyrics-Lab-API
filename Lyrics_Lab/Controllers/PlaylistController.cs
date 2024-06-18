@@ -22,7 +22,7 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetPLaylistById(int id)
+        public IActionResult GetPlaylistById(int id)
         {
             var playlist = _context.Playlists.FirstOrDefault(x => x.Id == id);
 
@@ -51,7 +51,7 @@ namespace Lyrics_Lab.Controllers
             _context.Playlists.Add(playlist);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPLaylistById), new { id = playlist.Id }, playlist);
+            return CreatedAtAction(nameof(GetPlaylistById), new { id = playlist.Id }, playlist);
         }
 
         [HttpPut("{Id}")]
