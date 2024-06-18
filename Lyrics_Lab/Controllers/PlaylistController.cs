@@ -75,5 +75,21 @@ namespace Lyrics_Lab.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("{Id}")]
+        public async  Task<IActionResult> DeletePlaylist(int Id) 
+        {
+            var playlist = await _context.Playlists.FindAsync(Id);
+
+            if (playlist == null)
+            {
+                return NotFound();
+            }
+
+            _context.Playlists.Remove(playlist);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
