@@ -53,5 +53,21 @@ namespace Lyrics_Lab.Controllers
 
             return CreatedAtAction(nameof(GetSongById), new { id = song.Id}, song);
         }
+
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteSong(int Id)
+        {
+            var song = await _context.Songs.FindAsync(Id);
+
+            if (song == null)
+            {
+                return NotFound();
+            }
+
+            _context.Songs.Remove(song);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

@@ -77,7 +77,7 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async  Task<IActionResult> DeletePlaylist(int Id) 
+        public async Task<IActionResult> DeletePlaylist(int Id) 
         {
             var playlist = await _context.Playlists.FindAsync(Id);
 
