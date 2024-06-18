@@ -1,11 +1,13 @@
-﻿namespace Lyrics_Lab.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Lyrics_Lab.DTOs
 {
-    public class Song
+    public class CreateSongDto
     {
-        public int Id { get; set; }
+        [Required]
+        [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
         public string? Lyric { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int? PlaylistId { get; set; }
     }
 }

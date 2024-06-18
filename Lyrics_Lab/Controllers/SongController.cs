@@ -1,5 +1,6 @@
 ﻿using Lyrics_Lab.Contexts;
-using Microsoft.AspNetCore.Http;
+using Lyrics_Lab.DTOs;
+using Lyrics_Lab.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lyrics_Lab.Controllers
@@ -30,6 +31,27 @@ namespace Lyrics_Lab.Controllers
             }
 
             return Ok(song);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Song>> CreateSong([FromBody] CreateSongDto createSongDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var song = new Song
+            {
+                Name = createSongDto.Name,
+                Lyric = createSongDto.Lyric,
+                PlaylistId = createSongDto.PlaylistId
+            };
+
+            _context.Songs.Add(song);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetSongById), new { id = song.Id}, song);
         }
     }
 }
