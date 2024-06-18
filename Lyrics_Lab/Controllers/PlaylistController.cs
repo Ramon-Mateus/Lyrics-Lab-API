@@ -55,7 +55,7 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpPut("{Id}")]
-        public async Task<ActionResult<Playlist>> UpdatePlaylist(int Id, [FromBody] UpdatePlaylistDto updatePlaylistDto) {
+        public async Task<IActionResult> UpdatePlaylist(int Id, [FromBody] UpdatePlaylistDto updatePlaylistDto) {
             if  (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
