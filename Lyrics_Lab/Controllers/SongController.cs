@@ -54,6 +54,45 @@ namespace Lyrics_Lab.Controllers
             return CreatedAtAction(nameof(GetSongById), new { id = song.Id}, song);
         }
 
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UpdateSong(int Id, [FromBody] UpdateSongDto updateSongDto)
+        {
+            if (updateSongDto == null)
+            {
+                return BadRequest("Nenhum dado para atualizar");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var song = await _context.Songs.FindAsync(Id);
+            if (song == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(updateSongDto.Name))
+            {
+                song.Name = updateSongDto.Name;
+            }
+
+            if (!string.IsNullOrEmpty(updateSongDto.Lyric))
+            {
+                song.Lyric = updateSongDto.Lyric;
+            }
+
+            if (updateSongDto.PlaylistId.HasValue)
+            {
+                song.PlaylistId = updateSongDto.PlaylistId.Value;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteSong(int Id)
         {
