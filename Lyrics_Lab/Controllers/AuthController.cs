@@ -38,7 +38,7 @@ namespace Lyrics_Lab.Controllers
         {
             var user = _repository.GetByEmail(dto.Email);
 
-            if (user == null) return BadRequest(new { message = "Invalid Credentials" }); // Depois colocar "Incorrect Email"
+            if (user == null) return BadRequest(new { message = "Incorrect Email" });
 
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password)) return BadRequest(new { message = "Incorrect Password" });
 
