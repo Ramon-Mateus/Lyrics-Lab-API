@@ -1,5 +1,6 @@
 using Lyrics_Lab.Contexts;
 using Lyrics_Lab.Data;
+using Lyrics_Lab.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
