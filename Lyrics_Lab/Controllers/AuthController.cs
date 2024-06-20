@@ -1,4 +1,6 @@
 ﻿using Lyrics_Lab.Data;
+using Lyrics_Lab.DTOs;
+using Lyrics_Lab.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lyrics_Lab.Controllers
@@ -15,9 +17,16 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register()
+        public IActionResult Register(RegisterDto dto)
         {
-            return Ok("Success");
+            var user = new User
+            {
+                Name = dto.Name,
+                Email = dto.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+            };
+
+            return Created("Success", _repository.Create(user));
         }
     }
 }
