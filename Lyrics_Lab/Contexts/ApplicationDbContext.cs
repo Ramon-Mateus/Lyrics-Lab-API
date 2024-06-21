@@ -15,6 +15,16 @@ namespace Lyrics_Lab.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(entity => { entity.HasIndex(e => e.Email).IsUnique(); });
+
+            modelBuilder.Entity<Playlist>()
+                .HasOne(p => p.User)
+                .WithMany(u => u.Playlists)
+                .HasForeignKey(p => p.UserId);
+
+            modelBuilder.Entity<Song>()
+                .HasOne(s => s.Playlist)
+                .WithMany(p => p.Songs)
+                .HasForeignKey(s => s.PlaylistId);
         }
     }
 }

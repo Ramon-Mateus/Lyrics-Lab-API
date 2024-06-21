@@ -7,5 +7,6 @@
         public string? Lyric { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int? PlaylistId { get; set; }
+        public Playlist Playlist { get; set; } = new Playlist();
     }
 }

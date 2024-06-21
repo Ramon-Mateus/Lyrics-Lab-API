@@ -9,5 +9,6 @@ namespace Lyrics_Lab.Models
         public string Email { get; set; } = string.Empty;
         [JsonIgnore]
         public string Password { get; set; } = string.Empty;
+        public List<Playlist> Playlists { get; set; } = new List<Playlist>();
     }
 }
