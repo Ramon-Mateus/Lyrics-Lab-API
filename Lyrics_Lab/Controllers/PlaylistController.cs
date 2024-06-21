@@ -1,11 +1,14 @@
 ﻿using Lyrics_Lab.Contexts;
 using Lyrics_Lab.DTOs;
 using Lyrics_Lab.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Lyrics_Lab.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PlaylistController : ControllerBase
@@ -42,10 +45,18 @@ namespace Lyrics_Lab.Controllers
                 return BadRequest(ModelState);
             }
 
+            var userId = User.FindFirstValue("iss");
+
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Usuário não autenticado"});
+            }
+
             var playlist = new Playlist
             {
                 Name = createPlaylistDto.Name,
-                Description = createPlaylistDto.Description
+                Description = createPlaylistDto.Description,
+                UserId = int.Parse(userId)
             };
 
             _context.Playlists.Add(playlist);

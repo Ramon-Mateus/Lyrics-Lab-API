@@ -34,5 +34,10 @@ namespace Lyrics_Lab.Helpers
 
             return (JwtSecurityToken) validatedToken;
         }
+
+        public SymmetricSecurityKey GetSymmetricSecurityKey()
+        {
+            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secureKey));
+        }
     }
 }
