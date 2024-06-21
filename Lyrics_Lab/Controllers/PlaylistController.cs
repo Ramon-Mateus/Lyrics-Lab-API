@@ -20,14 +20,28 @@ namespace Lyrics_Lab.Controllers
         [HttpGet]
         public IActionResult GetAllPLaylists()
         {
-            var playlists = _context.Playlists.ToList();
+            var userId = User.FindFirstValue("iss");
+
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Usuário não autenticado." });
+            }
+
+            var playlists = _context.Playlists.Where(p => p.UserId == int.Parse(userId)).ToList();
             return Ok(playlists);
         }
 
         [HttpGet("{Id}")]
         public IActionResult GetPlaylistById(int id)
         {
-            var playlist = _context.Playlists.FirstOrDefault(x => x.Id == id);
+            var userId = User.FindFirstValue("iss");
+
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Usuário não autenticado." });
+            }
+
+            var playlist = _context.Playlists.FirstOrDefault(p => p.Id == id && p.UserId == int.Parse(userId));
 
             if (playlist == null)
             {
@@ -49,7 +63,7 @@ namespace Lyrics_Lab.Controllers
 
             if (userId == null)
             {
-                return Unauthorized(new { message = "Usuário não autenticado"});
+                return Unauthorized(new { message = "Usuário não autenticado."});
             }
 
             var playlist = new Playlist
@@ -66,13 +80,20 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdatePlaylist(int Id, [FromBody] UpdatePlaylistDto updatePlaylistDto) {
+        public async Task<IActionResult> UpdatePlaylist(int id, [FromBody] UpdatePlaylistDto updatePlaylistDto) {
             if  (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var playlist = await _context.Playlists.FirstOrDefaultAsync(x => x.Id == Id);
+            var userId = User.FindFirstValue("iss");
+
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Usuário não autenticado." });
+            }
+
+            var playlist = await _context.Playlists.FirstOrDefaultAsync(p => p.Id == id && p.UserId == int.Parse(userId));
 
             if (playlist == null)
             {
@@ -88,9 +109,16 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeletePlaylist(int Id) 
+        public async Task<IActionResult> DeletePlaylist(int id)
         {
-            var playlist = await _context.Playlists.FindAsync(Id);
+            var userId = User.FindFirstValue("iss");
+
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Usuário não autenticado." });
+            }
+
+            var playlist = await _context.Playlists.FirstOrDefaultAsync(p => p.Id == id && p.UserId == int.Parse(userId));
 
             if (playlist == null)
             {

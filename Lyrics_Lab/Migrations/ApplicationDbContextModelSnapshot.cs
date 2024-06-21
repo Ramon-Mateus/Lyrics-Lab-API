@@ -38,9 +38,12 @@ namespace Lyrics_Lab.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Playlists");
+                    b.ToTable("Playlists", (string)null);
                 });
 
             modelBuilder.Entity("Lyrics_Lab.Models.Song", b =>
@@ -68,7 +71,7 @@ namespace Lyrics_Lab.Migrations
 
                     b.HasIndex("PlaylistId");
 
-                    b.ToTable("Songs");
+                    b.ToTable("Songs", (string)null);
                 });
 
             modelBuilder.Entity("Lyrics_Lab.Models.User", b =>
@@ -96,7 +99,7 @@ namespace Lyrics_Lab.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Lyrics_Lab.Models.Song", b =>
