@@ -3,6 +3,7 @@ using Lyrics_Lab.DTOs;
 using Lyrics_Lab.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Lyrics_Lab.Controllers
@@ -87,7 +88,7 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdateSong(int Id, [FromBody] UpdateSongDto updateSongDto)
+        public async Task<IActionResult> UpdateSong(int id, [FromBody] UpdateSongDto updateSongDto)
         {
             if (updateSongDto == null)
             {
@@ -99,7 +100,15 @@ namespace Lyrics_Lab.Controllers
                 return BadRequest(ModelState);
             }
 
-            var song = await _context.Songs.FindAsync(Id);
+            var userId = User.FindFirstValue("iss");
+
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Usuário não autenticado." });
+            }
+
+            var song = await _context.Songs.FirstOrDefaultAsync(s => s.Id == id && s.Playlist.UserId == int.Parse(userId));
+
             if (song == null)
             {
                 return NotFound();
@@ -126,9 +135,16 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteSong(int Id)
+        public async Task<IActionResult> DeleteSong(int id)
         {
-            var song = await _context.Songs.FindAsync(Id);
+            var userId = User.FindFirstValue("iss");
+
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Usuário não autenticado." });
+            }
+
+            var song = await _context.Songs.FirstOrDefaultAsync(s => s.Id == id && s.Playlist.UserId == int.Parse(userId));
 
             if (song == null)
             {
