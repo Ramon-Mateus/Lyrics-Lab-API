@@ -27,7 +27,11 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var playlists = _context.Playlists.Where(p => p.UserId == int.Parse(userId)).ToList();
+            var playlists = _context.Playlists
+                .Where(p => p.UserId == int.Parse(userId))
+                .Include(p => p.Songs)
+                .ToList();
+
             return Ok(playlists);
         }
 
@@ -41,7 +45,9 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var playlist = _context.Playlists.FirstOrDefault(p => p.Id == id && p.UserId == int.Parse(userId));
+            var playlist = _context.Playlists
+                .Include(p => p.Songs)
+                .FirstOrDefault(p => p.Id == id && p.UserId == int.Parse(userId));
 
             if (playlist == null)
             {
