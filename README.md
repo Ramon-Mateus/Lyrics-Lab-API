@@ -33,3 +33,13 @@ dotnet build
 ```shell
 dotnet run
 ```
+
+- Criar a migration
+```shell
+dotnet ef migrations add CreateTables
+```
+
+- Atualizar o banco com as migrations criadas
+```shell
+dotnet ef database update
+```
