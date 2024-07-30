@@ -7,6 +7,7 @@ namespace Lyrics_Lab.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Lyric { get; set; } = null;
+        public string? Tone { get; set; } = null;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int PlaylistId { get; set; }
         [JsonIgnore]
