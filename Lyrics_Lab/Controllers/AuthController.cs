@@ -51,7 +51,7 @@ namespace Lyrics_Lab.Controllers
 
             return Ok(new
             {
-                message = "Success"
+                jwt
             });
         }
 
@@ -60,15 +60,18 @@ namespace Lyrics_Lab.Controllers
         {
             try
             {
-            var jwt = Request.Cookies["jwt"];
+                var jwt = Request.Cookies["jwt"];
 
-            var token = _jwtService.Verify(jwt);
+                var token = _jwtService.Verify(jwt);
 
-            int userId = int.Parse(token.Issuer);
+                int userId = int.Parse(token.Issuer);
 
-            var user = _repository.GetById(userId);
+                var user = _repository.GetById(userId);
 
-            return Ok(user);
+                return Ok(new {
+                        user,
+                        jwt
+                });
             }
             catch (Exception _)
             {
