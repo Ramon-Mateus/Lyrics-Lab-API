@@ -2,7 +2,7 @@
 
 namespace Lyrics_Lab.Models
 {
-    public class Playlist
+    public class Album
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

@@ -10,6 +10,6 @@ namespace Lyrics_Lab.Models
         [JsonIgnore]
         public string Password { get; set; } = string.Empty;
         [JsonIgnore]
-        public List<Playlist> Playlists { get; set; } = new List<Playlist>();
+        public List<Album> Albums { get; set; } = new List<Album>();
     }
 }

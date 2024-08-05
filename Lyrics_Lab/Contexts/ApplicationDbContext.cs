@@ -8,7 +8,7 @@ namespace Lyrics_Lab.Contexts
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
 
-        public DbSet<Playlist> Playlists => Set<Playlist>();
+        public DbSet<Album> Albums => Set<Album>();
         public DbSet<Song> Songs => Set<Song>();
         public DbSet<User> Users => Set<User>();
 
@@ -16,15 +16,15 @@ namespace Lyrics_Lab.Contexts
         {
             modelBuilder.Entity<User>(entity => { entity.HasIndex(e => e.Email).IsUnique(); });
 
-            modelBuilder.Entity<Playlist>()
+            modelBuilder.Entity<Album>()
                 .HasOne(p => p.User)
-                .WithMany(u => u.Playlists)
+                .WithMany(u => u.Albums)
                 .HasForeignKey(p => p.UserId);
 
             modelBuilder.Entity<Song>()
-                .HasOne(s => s.Playlist)
+                .HasOne(s => s.Album)
                 .WithMany(p => p.Songs)
-                .HasForeignKey(s => s.PlaylistId);
+                .HasForeignKey(s => s.AlbumId);
         }
     }
 }

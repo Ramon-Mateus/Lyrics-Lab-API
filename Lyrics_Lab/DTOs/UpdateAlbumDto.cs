@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lyrics_Lab.DTOs
 {
-    public class UpdatePlaylistDto
+    public class UpdateAlbumDto
     {
         [Required]
         [MaxLength(100)]
