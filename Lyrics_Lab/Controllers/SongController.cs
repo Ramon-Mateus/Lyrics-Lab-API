@@ -67,7 +67,7 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var playlist = await _context.Albums.FindAsync(createSongDto.PlaylistId);
+            var playlist = await _context.Albums.FindAsync(createSongDto.AlbumId);
 
             if (playlist == null || playlist.UserId != int.Parse(userId))
             {
@@ -78,7 +78,8 @@ namespace Lyrics_Lab.Controllers
             {
                 Name = createSongDto.Name,
                 Lyric = createSongDto.Lyric,
-                AlbumId = createSongDto.PlaylistId
+                Tone = createSongDto.Tone,
+                AlbumId = createSongDto.AlbumId
             };
 
             _context.Songs.Add(song);
@@ -122,6 +123,11 @@ namespace Lyrics_Lab.Controllers
             if (!string.IsNullOrEmpty(updateSongDto.Lyric))
             {
                 song.Lyric = updateSongDto.Lyric;
+            }
+
+            if (!string.IsNullOrEmpty(updateSongDto.Tone))
+            {
+                song.Tone = updateSongDto.Tone;
             }
 
             if (updateSongDto.AlbumId.HasValue)

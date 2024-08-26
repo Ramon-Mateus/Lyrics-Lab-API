@@ -8,6 +8,7 @@ namespace Lyrics_Lab.DTOs
         [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
         public string? Lyric { get; set; }
-        public int PlaylistId { get; set; }
+        public string? Tone { get; set; }
+        public int AlbumId { get; set; }
     }
 }
