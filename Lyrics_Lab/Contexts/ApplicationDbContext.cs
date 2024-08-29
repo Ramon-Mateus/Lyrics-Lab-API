@@ -17,14 +17,14 @@ namespace Lyrics_Lab.Contexts
             modelBuilder.Entity<User>(entity => { entity.HasIndex(e => e.Email).IsUnique(); });
 
             modelBuilder.Entity<Album>()
-                .HasOne(p => p.User)
-                .WithMany(u => u.Albums)
-                .HasForeignKey(p => p.UserId);
+                .HasOne(u => u.User)
+                .WithMany(a => a.Albums)
+                .HasForeignKey(u => u.UserId);
 
             modelBuilder.Entity<Song>()
-                .HasOne(s => s.Album)
-                .WithMany(p => p.Songs)
-                .HasForeignKey(s => s.AlbumId);
+                .HasMany(a => a.Albums)
+                .WithMany(s => s.Songs)
+                .UsingEntity(sa => sa.ToTable("SongAlbum"));
         }
     }
 }

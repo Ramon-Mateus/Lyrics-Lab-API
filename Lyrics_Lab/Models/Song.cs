@@ -9,8 +9,6 @@ namespace Lyrics_Lab.Models
         public string? Lyric { get; set; } = null;
         public string? Tone { get; set; } = null;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public int AlbumId { get; set; }
-        [JsonIgnore]
-        public Album? Album { get; set; }
+        public List<Album> Albums { get; set; } = new List<Album>();
     }
 }
