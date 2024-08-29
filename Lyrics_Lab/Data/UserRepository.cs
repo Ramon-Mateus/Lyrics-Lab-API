@@ -15,7 +15,17 @@ namespace Lyrics_Lab.Data
         public User Create(User user)
         {
             _context.Users.Add(user);
-            user.Id = _context.SaveChanges();
+            _context.SaveChanges();
+
+            var album = new Album
+            {
+                Name = "Default",
+                Description = "Default Album",
+                UserId = user.Id
+            };
+            
+            _context.Albums.Add(album);
+            _context.SaveChanges();
 
             return user;
         }

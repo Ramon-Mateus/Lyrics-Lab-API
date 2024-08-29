@@ -8,6 +8,6 @@ namespace Lyrics_Lab.DTOs
         public string? Name { get; set; }
         public string? Lyric { get; set; }
         public string? Tone { get; set; }
-        public int? AlbumId { get; set; }
+        public List<int>? AlbumIds { get; set; } = new List<int>();
     }
 }

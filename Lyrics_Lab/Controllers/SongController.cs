@@ -27,7 +27,7 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var songs = _context.Songs.Where(s => s.Album.UserId == int.Parse(userId)).ToList();
+            var songs = _context.Songs.Where(s => s.Albums.Any(a => a.UserId == int.Parse(userId))).ToList();
             
             return Ok(songs);
         }
@@ -41,14 +41,16 @@ namespace Lyrics_Lab.Controllers
             {
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
+            
+            var song = _context.Songs.Where(s => s.Id == id && s.Albums.Any(a => a.UserId == int.Parse(userId)))
+                .Include(s => s.Albums)
+                .ToList();
 
-            var song = _context.Songs.FirstOrDefault(s => s.Id == id && s.Album.UserId == int.Parse(userId));
-
-            if (song == null)
+            if (song.Count == 0)
             {
                 return NotFound();
             }
-
+            
             return Ok(song);
         }
 
@@ -67,22 +69,24 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var playlist = await _context.Albums.FindAsync(createSongDto.AlbumId);
-
-            if (playlist == null || playlist.UserId != int.Parse(userId))
-            {
-                return Forbid();
-            }
-
             var song = new Song
             {
                 Name = createSongDto.Name,
                 Lyric = createSongDto.Lyric,
-                Tone = createSongDto.Tone,
-                AlbumId = createSongDto.AlbumId
+                Tone = createSongDto.Tone
             };
 
             _context.Songs.Add(song);
+            await _context.SaveChangesAsync();
+            
+            var defaultAlbum = await _context.Albums.FirstOrDefaultAsync(a => a.UserId == int.Parse(userId) && a.Name == "Default");
+
+            if (defaultAlbum == null)
+            {
+                return NotFound("Default album not found.");
+            }
+            
+            defaultAlbum.Songs.Add(song);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetSongById), new { id = song.Id}, song);
@@ -108,31 +112,51 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var song = await _context.Songs.FirstOrDefaultAsync(s => s.Id == id && s.Album.UserId == int.Parse(userId));
-
+            var song = await _context.Songs.FirstOrDefaultAsync(s => s.Id == id && s.Albums.Any(a => a.UserId == int.Parse(userId)));
+            
             if (song == null)
             {
                 return NotFound();
             }
-
+            
             if (!string.IsNullOrEmpty(updateSongDto.Name))
             {
                 song.Name = updateSongDto.Name;
             }
-
+            
             if (!string.IsNullOrEmpty(updateSongDto.Lyric))
             {
                 song.Lyric = updateSongDto.Lyric;
             }
-
+            
             if (!string.IsNullOrEmpty(updateSongDto.Tone))
             {
                 song.Tone = updateSongDto.Tone;
             }
 
-            if (updateSongDto.AlbumId.HasValue)
+            if (updateSongDto?.AlbumIds != null && updateSongDto.AlbumIds.Any())
             {
-                song.AlbumId = updateSongDto.AlbumId.Value;
+                var albums = await _context.Albums
+                    .Where(a => a.UserId == int.Parse(userId) && a.Description != "Default")
+                    .ToListAsync();
+
+                if (albums.Count > 0)
+                { 
+                    await _context.Database.ExecuteSqlRawAsync(@"
+                       DELETE FROM SongAlbum
+                       WHERE AlbumsId IN (
+                           SELECT Id
+                           FROM Albums
+                           WHERE UserId = {0} AND Description != 'Default'
+                       )
+                       ", userId);
+                }
+                
+                foreach (var albumId in updateSongDto.AlbumIds.Distinct())
+                {
+                    var album = albums.FirstOrDefault(a => a.Id == albumId);
+                    album?.Songs.Add(song);
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -150,13 +174,13 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var song = await _context.Songs.FirstOrDefaultAsync(s => s.Id == id && s.Album.UserId == int.Parse(userId));
-
+            var song = await _context.Songs.FirstOrDefaultAsync(s => s.Id == id && s.Albums.Any(a => a.UserId == int.Parse(userId)));
+            
             if (song == null)
             {
                 return NotFound();
             }
-
+            
             _context.Songs.Remove(song);
             await _context.SaveChangesAsync();
 

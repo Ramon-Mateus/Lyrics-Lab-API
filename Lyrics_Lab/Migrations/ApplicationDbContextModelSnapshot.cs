@@ -17,6 +17,21 @@ namespace Lyrics_Lab.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
 
+            modelBuilder.Entity("AlbumSong", b =>
+                {
+                    b.Property<int>("AlbumsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SongsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AlbumsId", "SongsId");
+
+                    b.HasIndex("SongsId");
+
+                    b.ToTable("SongAlbum", (string)null);
+                });
+
             modelBuilder.Entity("Lyrics_Lab.Models.Album", b =>
                 {
                     b.Property<int>("Id")
@@ -50,9 +65,6 @@ namespace Lyrics_Lab.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AlbumId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -67,8 +79,6 @@ namespace Lyrics_Lab.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AlbumId");
 
                     b.ToTable("Songs");
                 });
@@ -99,6 +109,21 @@ namespace Lyrics_Lab.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("AlbumSong", b =>
+                {
+                    b.HasOne("Lyrics_Lab.Models.Album", null)
+                        .WithMany()
+                        .HasForeignKey("AlbumsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lyrics_Lab.Models.Song", null)
+                        .WithMany()
+                        .HasForeignKey("SongsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Lyrics_Lab.Models.Album", b =>
                 {
                     b.HasOne("Lyrics_Lab.Models.User", "User")
@@ -108,22 +133,6 @@ namespace Lyrics_Lab.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Lyrics_Lab.Models.Song", b =>
-                {
-                    b.HasOne("Lyrics_Lab.Models.Album", "Album")
-                        .WithMany("Songs")
-                        .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Album");
-                });
-
-            modelBuilder.Entity("Lyrics_Lab.Models.Album", b =>
-                {
-                    b.Navigation("Songs");
                 });
 
             modelBuilder.Entity("Lyrics_Lab.Models.User", b =>
