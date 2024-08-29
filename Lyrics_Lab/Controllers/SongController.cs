@@ -41,10 +41,12 @@ namespace Lyrics_Lab.Controllers
             {
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
-
-            var song = _context.Songs.FirstOrDefault(s => s.Id == id && s.Albums.Any(a => a.UserId == int.Parse(userId)));
             
-            if (song == null)
+            var song = _context.Songs.Where(s => s.Id == id && s.Albums.Any(a => a.UserId == int.Parse(userId)))
+                .Include(s => s.Albums)
+                .ToList();
+
+            if (song.Count == 0)
             {
                 return NotFound();
             }
@@ -142,7 +144,7 @@ namespace Lyrics_Lab.Controllers
                 { 
                     await _context.Database.ExecuteSqlRawAsync(@"
                        DELETE FROM SongAlbum
-                       WHERE AlbumId IN (
+                       WHERE AlbumsId IN (
                            SELECT Id
                            FROM Albums
                            WHERE UserId = {0} AND Description != 'Default'
