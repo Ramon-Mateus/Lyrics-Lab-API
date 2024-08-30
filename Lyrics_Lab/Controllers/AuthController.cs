@@ -51,6 +51,7 @@ namespace Lyrics_Lab.Controllers
 
             return Ok(new
             {
+                user,
                 jwt
             });
         }
