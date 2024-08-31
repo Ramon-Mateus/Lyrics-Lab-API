@@ -44,9 +44,9 @@ namespace Lyrics_Lab.Controllers
             
             var song = _context.Songs.Where(s => s.Id == id && s.Albums.Any(a => a.UserId == int.Parse(userId)))
                 .Include(s => s.Albums)
-                .ToList();
+                .FirstOrDefault();
 
-            if (song.Count == 0)
+            if (song == null)
             {
                 return NotFound();
             }
