@@ -147,7 +147,7 @@ namespace Lyrics_Lab.Controllers
                        WHERE AlbumsId IN (
                            SELECT Id
                            FROM Albums
-                           WHERE UserId = {0} AND Description != 'Default'
+                           WHERE UserId = {0} AND Name != 'Default'
                        )
                        ", userId);
                 }
