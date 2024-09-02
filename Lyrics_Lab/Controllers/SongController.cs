@@ -27,7 +27,9 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var songs = _context.Songs.Where(s => s.Albums.Any(a => a.UserId == int.Parse(userId))).ToList();
+            var songs = _context.Songs.Where(s => s.Albums.Any(a => a.UserId == int.Parse(userId)))
+                .Include(s => s.Albums)
+                .ToList();
             
             return Ok(songs);
         }

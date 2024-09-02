@@ -28,8 +28,8 @@ namespace Lyrics_Lab.Controllers
             }
 
             var albums = _context.Albums
-                .Where(p => p.UserId == int.Parse(userId))
-                .Include(p => p.Songs)
+                .Where(a => a.UserId == int.Parse(userId))
+                .Include(a =>a.Songs)
                 .ToList();
 
             return Ok(albums);
@@ -46,8 +46,8 @@ namespace Lyrics_Lab.Controllers
             }
 
             var album = _context.Albums
-                .Include(p => p.Songs)
-                .FirstOrDefault(p => p.Id == id && p.UserId == int.Parse(userId));
+                .Include(a => a.Songs)
+                .FirstOrDefault(a => a.Id == id && a.UserId == int.Parse(userId));
 
             if (album == null)
             {
@@ -100,7 +100,7 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var album = await _context.Albums.FirstOrDefaultAsync(p => p.Id == id && p.UserId == int.Parse(userId));
+            var album = await _context.Albums.FirstOrDefaultAsync(a => a.Id == id && a.UserId == int.Parse(userId));
 
             if (album == null)
             {
@@ -130,7 +130,7 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var playlist = await _context.Albums.FirstOrDefaultAsync(p => p.Id == id && p.UserId == int.Parse(userId));
+            var playlist = await _context.Albums.FirstOrDefaultAsync(a => a.Id == id && a.UserId == int.Parse(userId));
 
             if (playlist == null)
             {
