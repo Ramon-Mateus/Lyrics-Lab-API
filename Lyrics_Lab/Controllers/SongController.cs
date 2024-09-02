@@ -141,15 +141,15 @@ namespace Lyrics_Lab.Controllers
                     .ToListAsync();
 
                 if (albums.Count > 0)
-                { 
+                {
                     await _context.Database.ExecuteSqlRawAsync(@"
                        DELETE FROM SongAlbum
-                       WHERE AlbumsId IN (
+                       WHERE SongsId = {0} AND AlbumsId IN (
                            SELECT Id
                            FROM Albums
-                           WHERE UserId = {0} AND Name != 'Default'
+                           WHERE UserId = {1} AND Name != 'Default'
                        )
-                       ", userId);
+                       ", song.Id, userId);
                 }
                 
                 foreach (var albumId in updateSongDto.AlbumIds.Distinct())
