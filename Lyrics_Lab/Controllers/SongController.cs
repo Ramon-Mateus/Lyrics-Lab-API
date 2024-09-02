@@ -136,10 +136,10 @@ namespace Lyrics_Lab.Controllers
                 song.Tone = updateSongDto.Tone;
             }
 
-            if (updateSongDto?.AlbumIds != null && updateSongDto.AlbumIds.Any())
+            if (updateSongDto?.AlbumIds != null)
             {
                 var albums = await _context.Albums
-                    .Where(a => a.UserId == int.Parse(userId) && a.Description != "Default")
+                    .Where(a => a.UserId == int.Parse(userId) && a.Name != "Default")
                     .ToListAsync();
 
                 if (albums.Count > 0)
