@@ -76,6 +76,7 @@ namespace Lyrics_Lab.Controllers
             {
                 Name = createPlaylistDto.Name,
                 Description = createPlaylistDto.Description,
+                Image = createPlaylistDto.Image,
                 UserId = int.Parse(userId)
             };
 
@@ -108,6 +109,11 @@ namespace Lyrics_Lab.Controllers
 
             album.Name = updateAlbumDto.Name;
             album.Description = updateAlbumDto.Description;
+
+            if (updateAlbumDto.Image != null)
+            {
+                album.Image = updateAlbumDto.Image;
+            }
 
             await _context.SaveChangesAsync();
 

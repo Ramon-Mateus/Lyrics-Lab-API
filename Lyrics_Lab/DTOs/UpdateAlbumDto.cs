@@ -11,5 +11,6 @@ namespace Lyrics_Lab.DTOs
         [Required]
         [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
+        public string? Image { get; set; }
     }
 }
