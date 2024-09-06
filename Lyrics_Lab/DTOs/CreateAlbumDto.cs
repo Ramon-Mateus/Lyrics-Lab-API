@@ -2,7 +2,7 @@
 
 namespace Lyrics_Lab.DTOs
 {
-    public class CreatePlaylistDto
+    public class CreateAlbumDto
     {
         [Required]
         [MaxLength(100)]

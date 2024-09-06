@@ -21,6 +21,7 @@ namespace Lyrics_Lab.Data
             {
                 Name = "Default",
                 Description = "Default Album",
+                IsDefault = true,
                 UserId = user.Id
             };
             

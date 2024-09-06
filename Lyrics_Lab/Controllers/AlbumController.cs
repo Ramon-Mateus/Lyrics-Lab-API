@@ -36,7 +36,7 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetPlaylistById(int id)
+        public IActionResult GetAlbumById(int id)
         {
             var userId = User.FindFirstValue("iss");
 
@@ -58,7 +58,7 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Album>> CreatePlaylist([FromBody] CreatePlaylistDto createPlaylistDto)
+        public async Task<ActionResult<Album>> CreateAlbum([FromBody] CreateAlbumDto createAlbumDto)
         {
             if (!ModelState.IsValid)
             {
@@ -72,22 +72,22 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado."});
             }
 
-            var playlist = new Album
+            var album = new Album
             {
-                Name = createPlaylistDto.Name,
-                Description = createPlaylistDto.Description,
-                Image = createPlaylistDto.Image,
+                Name = createAlbumDto.Name,
+                Description = createAlbumDto.Description,
+                Image = createAlbumDto.Image,
                 UserId = int.Parse(userId)
             };
 
-            _context.Albums.Add(playlist);
+            _context.Albums.Add(album);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPlaylistById), new { id = playlist.Id }, playlist);
+            return CreatedAtAction(nameof(GetAlbumById), new { id = album.Id }, album);
         }
 
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdatePlaylist(int id, [FromBody] UpdateAlbumDto updateAlbumDto) {
+        public async Task<IActionResult> UpdateAlbum(int id, [FromBody] UpdateAlbumDto updateAlbumDto) {
             if  (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -121,7 +121,7 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeletePlaylist(int id)
+        public async Task<IActionResult> DeleteAlbum(int id)
         {
             var userId = User.FindFirstValue("iss");
 
@@ -130,14 +130,14 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var playlist = await _context.Albums.FirstOrDefaultAsync(a => a.Id == id && a.UserId == int.Parse(userId));
+            var album = await _context.Albums.FirstOrDefaultAsync(a => a.Id == id && a.UserId == int.Parse(userId));
 
-            if (playlist == null)
+            if (album == null || album.IsDefault == true)
             {
                 return NotFound();
             }
 
-            _context.Albums.Remove(playlist);
+            _context.Albums.Remove(album);
             await _context.SaveChangesAsync();
 
             return NoContent();

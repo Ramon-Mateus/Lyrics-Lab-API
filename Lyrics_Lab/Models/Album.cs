@@ -8,6 +8,7 @@ namespace Lyrics_Lab.Models
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string? Image {  get; set; } = null;
+        public bool IsDefault { get; set; } = false;
         public int UserId { get; set; }
         [JsonIgnore]
         public User? User { get; set; }

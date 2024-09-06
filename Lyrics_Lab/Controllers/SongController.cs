@@ -81,7 +81,7 @@ namespace Lyrics_Lab.Controllers
             _context.Songs.Add(song);
             await _context.SaveChangesAsync();
             
-            var defaultAlbum = await _context.Albums.FirstOrDefaultAsync(a => a.UserId == int.Parse(userId) && a.Name == "Default");
+            var defaultAlbum = await _context.Albums.FirstOrDefaultAsync(a => a.UserId == int.Parse(userId) && a.IsDefault == true);
 
             if (defaultAlbum == null)
             {
@@ -139,7 +139,7 @@ namespace Lyrics_Lab.Controllers
             if (updateSongDto?.AlbumIds != null)
             {
                 var albums = await _context.Albums
-                    .Where(a => a.UserId == int.Parse(userId) && a.Name != "Default")
+                    .Where(a => a.UserId == int.Parse(userId) && a.IsDefault != true)
                     .ToListAsync();
 
                 if (albums.Count > 0)
@@ -149,7 +149,7 @@ namespace Lyrics_Lab.Controllers
                        WHERE SongsId = {0} AND AlbumsId IN (
                            SELECT Id
                            FROM Albums
-                           WHERE UserId = {1} AND Name != 'Default'
+                           WHERE UserId = {1} AND IsDefault != true
                        )
                        ", song.Id, userId);
                 }
