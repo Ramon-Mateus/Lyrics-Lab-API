@@ -46,7 +46,8 @@ namespace Lyrics_Lab.Controllers
 
             Response.Cookies.Append("jwt", jwt, new CookieOptions
             {
-                HttpOnly = true
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
             });
 
             return Ok(new
