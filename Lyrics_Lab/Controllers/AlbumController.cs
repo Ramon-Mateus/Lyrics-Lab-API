@@ -102,15 +102,22 @@ namespace Lyrics_Lab.Controllers
 
             var album = await _context.Albums.FirstOrDefaultAsync(a => a.Id == id && a.UserId == int.Parse(userId));
 
-            if (album == null)
+            if (album == null || album.IsDefault == true)
             {
                 return NotFound();
             }
 
-            album.Name = updateAlbumDto.Name;
-            album.Description = updateAlbumDto.Description;
+            if (!string.IsNullOrEmpty(updateAlbumDto.Name))
+            {
+                album.Name = updateAlbumDto.Name;
+            }
+            
+            if (!string.IsNullOrEmpty(updateAlbumDto.Description))
+            {
+                album.Description = updateAlbumDto.Description;
+            }
 
-            if (updateAlbumDto.Image != null)
+            if (!string.IsNullOrEmpty(updateAlbumDto.Image))
             {
                 album.Image = updateAlbumDto.Image;
             }
