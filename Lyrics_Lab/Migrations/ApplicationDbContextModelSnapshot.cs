@@ -68,6 +68,12 @@ namespace Lyrics_Lab.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<float?>("Bpm")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Compass")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 

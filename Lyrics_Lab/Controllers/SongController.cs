@@ -75,7 +75,9 @@ namespace Lyrics_Lab.Controllers
             {
                 Name = createSongDto.Name,
                 Lyric = createSongDto.Lyric,
-                Tone = createSongDto.Tone
+                Tone = createSongDto.Tone,
+                Compass = createSongDto.Compass,
+                Bpm = createSongDto.Bpm
             };
 
             _context.Songs.Add(song);
@@ -134,6 +136,16 @@ namespace Lyrics_Lab.Controllers
             if (!string.IsNullOrEmpty(updateSongDto.Tone))
             {
                 song.Tone = updateSongDto.Tone;
+            }
+            
+            if (!string.IsNullOrEmpty(updateSongDto.Compass))
+            {
+                song.Compass = updateSongDto.Compass;
+            }
+
+            if (updateSongDto.Bpm.HasValue)
+            {
+                song.Bpm = updateSongDto.Bpm;
             }
 
             if (updateSongDto?.AlbumIds != null)

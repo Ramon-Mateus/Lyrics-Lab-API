@@ -8,6 +8,8 @@ namespace Lyrics_Lab.Models
         public string Name { get; set; } = string.Empty;
         public string? Lyric { get; set; } = null;
         public string? Tone { get; set; } = null;
+        public string? Compass { get; set; } = null;
+        public float? Bpm { get; set; } = null;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public List<Album> Albums { get; set; } = new List<Album>();
     }

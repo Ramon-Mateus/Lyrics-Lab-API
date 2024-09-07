@@ -9,5 +9,7 @@ namespace Lyrics_Lab.DTOs
         public string Name { get; set; } = string.Empty;
         public string? Lyric { get; set; }
         public string? Tone { get; set; }
+        public float? Bpm { get; set; }
+        public string? Compass { get; set; }
     }
 }
