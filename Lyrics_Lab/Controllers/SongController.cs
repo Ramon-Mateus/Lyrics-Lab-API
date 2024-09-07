@@ -99,11 +99,6 @@ namespace Lyrics_Lab.Controllers
         [HttpPut("{Id}")]
         public async Task<IActionResult> UpdateSong(int id, [FromBody] UpdateSongDto updateSongDto)
         {
-            if (updateSongDto == null)
-            {
-                return BadRequest("Nenhum dado para atualizar");
-            }
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
