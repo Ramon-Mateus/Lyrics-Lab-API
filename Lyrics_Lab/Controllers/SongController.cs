@@ -163,7 +163,7 @@ namespace Lyrics_Lab.Controllers
                 
                 foreach (var albumId in updateSongDto.AlbumIds.Distinct())
                 {
-                    var album = albums.FirstOrDefault(a => a.Id == albumId);
+                    var album = albums.FirstOrDefault(a => a.Id == albumId && a.UserId == int.Parse(userId));
                     album?.Songs.Add(song);
                 }
             }
