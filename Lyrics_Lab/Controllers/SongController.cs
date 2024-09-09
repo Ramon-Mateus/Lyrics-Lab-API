@@ -79,6 +79,15 @@ namespace Lyrics_Lab.Controllers
                 Compass = createSongDto.Compass,
                 Bpm = createSongDto.Bpm
             };
+            
+            if (createSongDto.AlbumIds != null && createSongDto.AlbumIds.Count > 0)
+            {
+                foreach (var albumId in createSongDto.AlbumIds.Distinct())
+                {
+                    var album = await _context.Albums.FirstOrDefaultAsync(a => a.Id == albumId && a.UserId == int.Parse(userId));
+                    album?.Songs.Add(song);
+                }
+            }
 
             _context.Songs.Add(song);
             await _context.SaveChangesAsync();
