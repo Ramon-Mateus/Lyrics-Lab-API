@@ -10,5 +10,6 @@ namespace Lyrics_Lab.DTOs
         [MaxLength(500)]
         public string? Description { get; set; }
         public string? Image { get; set; }
+        public List<int>? SongIds { get; set; } = new List<int>();
     }
 }

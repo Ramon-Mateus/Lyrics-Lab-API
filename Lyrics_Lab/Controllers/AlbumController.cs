@@ -100,7 +100,9 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var album = await _context.Albums.FirstOrDefaultAsync(a => a.Id == id && a.UserId == int.Parse(userId));
+            var album = await _context.Albums
+                .Include(a => a.Songs)
+                .FirstOrDefaultAsync(a => a.Id == id && a.UserId == int.Parse(userId));
 
             if (album == null || album.IsDefault == true)
             {
@@ -120,6 +122,27 @@ namespace Lyrics_Lab.Controllers
             if (!string.IsNullOrEmpty(updateAlbumDto.Image))
             {
                 album.Image = updateAlbumDto.Image;
+            }
+            
+            if (updateAlbumDto?.SongIds != null)
+            {
+                foreach (var song in album.Songs.ToList())
+                {
+                    if (!updateAlbumDto.SongIds.Contains(song.Id))
+                    {
+                        album.Songs.Remove(song);
+                    }
+                    else
+                    {
+                        updateAlbumDto.SongIds.Remove(song.Id);
+                    }
+                }
+
+                foreach (var songId in updateAlbumDto.SongIds)
+                {
+                    var song = await _context.Songs.FirstOrDefaultAsync(s => s.Id == songId && s.Albums.Any(a => a.UserId == int.Parse(userId)));
+                    if(song != null) album.Songs.Add(song);
+                }
             }
 
             await _context.SaveChangesAsync();
