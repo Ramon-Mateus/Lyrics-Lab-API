@@ -113,16 +113,9 @@ namespace Lyrics_Lab.Controllers
             {
                 album.Name = updateAlbumDto.Name;
             }
-            
-            if (!string.IsNullOrEmpty(updateAlbumDto.Description))
-            {
-                album.Description = updateAlbumDto.Description;
-            }
 
-            if (!string.IsNullOrEmpty(updateAlbumDto.Image))
-            {
-                album.Image = updateAlbumDto.Image;
-            }
+            album.Description = !string.IsNullOrEmpty(updateAlbumDto.Description) ? updateAlbumDto.Description : null;
+            album.Image = !string.IsNullOrEmpty(updateAlbumDto.Image) ? updateAlbumDto.Image : null;
             
             if (updateAlbumDto?.SongIds != null)
             {
