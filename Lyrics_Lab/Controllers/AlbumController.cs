@@ -80,6 +80,15 @@ namespace Lyrics_Lab.Controllers
                 UserId = int.Parse(userId)
             };
 
+            if (createAlbumDto.SongIds != null) {
+                foreach (var songId in createAlbumDto.SongIds)
+                {
+                    var song = await _context.Songs.FirstOrDefaultAsync(s =>
+                        s.Id == songId && s.Albums.Any(a => a.UserId == int.Parse(userId)));
+                    if (song != null) album.Songs.Add(song);
+                }
+            }
+
             _context.Albums.Add(album);
             await _context.SaveChangesAsync();
 
