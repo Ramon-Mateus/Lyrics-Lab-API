@@ -131,26 +131,11 @@ namespace Lyrics_Lab.Controllers
             {
                 song.Name = updateSongDto.Name;
             }
-            
-            if (!string.IsNullOrEmpty(updateSongDto.Lyric))
-            {
-                song.Lyric = updateSongDto.Lyric;
-            }
-            
-            if (!string.IsNullOrEmpty(updateSongDto.Tone))
-            {
-                song.Tone = updateSongDto.Tone;
-            }
-            
-            if (!string.IsNullOrEmpty(updateSongDto.Compass))
-            {
-                song.Compass = updateSongDto.Compass;
-            }
 
-            if (updateSongDto.Bpm.HasValue)
-            {
-                song.Bpm = updateSongDto.Bpm;
-            }
+            song.Lyric = !string.IsNullOrEmpty(updateSongDto.Lyric) ? updateSongDto.Lyric : null;
+            song.Tone = !string.IsNullOrEmpty(updateSongDto.Tone) ? updateSongDto.Tone : null;
+            song.Compass = !string.IsNullOrEmpty(updateSongDto.Compass) ? updateSongDto.Compass : null;
+            song.Bpm = updateSongDto.Bpm; // updateSongDto.Bpm.HasValue
 
             if (updateSongDto?.AlbumIds != null)
             {
