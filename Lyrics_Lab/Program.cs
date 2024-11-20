@@ -76,7 +76,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(options => options
-    .WithOrigins(new[] {"http://localhost:3000", "http://localhost:8080", "http://localhost:4200"}) // Colocar a(s) porta(s) que o front-end vai utilizar para permitir acesso à API
+    .AllowAnyOrigin()
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()
