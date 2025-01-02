@@ -19,7 +19,16 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=todos.sqlite3"));
 
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+  options.AddPolicy("AllowSpecificOrigins", policy =>
+  {
+    policy.WithOrigins("http://localhost:3000") // Replace with your allowed origins
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // Needed if you're using cookies or authorization headers
+  });
+});
 
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -30,32 +39,32 @@ builder.Services.AddSingleton<JwtService>();
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = "JwtBearer";
-    options.DefaultChallengeScheme = "JwtBearer";
+  options.DefaultAuthenticateScheme = "JwtBearer";
+  options.DefaultChallengeScheme = "JwtBearer";
 }).AddJwtBearer("JwtBearer", configureOptions =>
 {
-    configureOptions.TokenValidationParameters = new TokenValidationParameters
+  configureOptions.TokenValidationParameters = new TokenValidationParameters
+  {
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
-        {
-            var jwtService = builder.Services.BuildServiceProvider().GetService<JwtService>();
-            return new[] { jwtService.GetSymmetricSecurityKey() };
-        },
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
-    };
+      var jwtService = builder.Services.BuildServiceProvider().GetService<JwtService>();
+      return new[] { jwtService.GetSymmetricSecurityKey() };
+    },
+    ValidateIssuer = false,
+    ValidateAudience = false,
+    ValidateLifetime = true,
+    ClockSkew = TimeSpan.Zero
+  };
 
-    configureOptions.Events = new JwtBearerEvents
+  configureOptions.Events = new JwtBearerEvents
+  {
+    OnMessageReceived = context =>
     {
-        OnMessageReceived = context =>
-        {
-            context.Token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            return Task.CompletedTask;
-        }
-    };
+      context.Token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+      return Task.CompletedTask;
+    }
+  };
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -69,18 +78,13 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-app.UseCors(options => options
-    .AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .AllowCredentials()
-);
+app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
