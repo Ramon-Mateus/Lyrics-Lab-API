@@ -9,6 +9,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
+using Lyrics_Lab.Repositories.Interfaces;
+using Lyrics_Lab.Repositories;
+using Lyrics_Lab.Services;
+using Lyrics_Lab.Services.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +22,14 @@ var builder = WebApplication.CreateBuilder(args);
 //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 //builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=todos.sqlite3"));
+
+builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
+builder.Services.AddScoped<IAlbumService, AlbumService>();
+
+builder.Services.AddScoped<ISongRepository, SongRepository>();
+builder.Services.AddScoped<ISongService, SongService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -70,7 +82,6 @@ builder.Services.AddAuthentication(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();

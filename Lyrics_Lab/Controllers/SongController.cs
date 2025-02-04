@@ -1,6 +1,7 @@
 ﻿using Lyrics_Lab.Contexts;
 using Lyrics_Lab.DTOs;
 using Lyrics_Lab.Models;
+using Lyrics_Lab.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +15,13 @@ namespace Lyrics_Lab.Controllers
     public class SongController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ISongService _songService;
 
-        public SongController(ApplicationDbContext context) => _context = context;
+        public SongController(ApplicationDbContext context, ISongService songService)
+        {
+            _context = context;
+            _songService = songService;
+        }
 
         [HttpGet]
         public IActionResult GetAllSongs()
@@ -35,7 +41,7 @@ namespace Lyrics_Lab.Controllers
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetSongById(int id)
+        public async Task<IActionResult> GetSongById(int id)
         {
             var userId = User.FindFirstValue("iss");
 
@@ -43,10 +49,8 @@ namespace Lyrics_Lab.Controllers
             {
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
-            
-            var song = _context.Songs.Where(s => s.Id == id && s.Albums.Any(a => a.UserId == int.Parse(userId)))
-                .Include(s => s.Albums)
-                .FirstOrDefault();
+
+            var song = await _songService.GetSongById(int.Parse(userId), id);
 
             if (song == null)
             {
