@@ -1,7 +1,8 @@
 ﻿using Lyrics_Lab.Contexts;
 using Lyrics_Lab.Models;
+using Lyrics_Lab.Repositories.Interfaces;
 
-namespace Lyrics_Lab.Data
+namespace Lyrics_Lab.Repositories
 {
     public class UserRepository : IUserRepository
     {
@@ -24,7 +25,7 @@ namespace Lyrics_Lab.Data
                 IsDefault = true,
                 UserId = user.Id
             };
-            
+
             _context.Albums.Add(album);
             _context.SaveChanges();
 
@@ -33,12 +34,12 @@ namespace Lyrics_Lab.Data
 
         public User GetByEmail(string email)
         {
-            return _context.Users.FirstOrDefault(u => u.Email == email);
+            return _context.Users.FirstOrDefault(u => u.Email == email)!;
         }
-        
+
         public User GetById(int id)
         {
-            return _context.Users.FirstOrDefault(u => u.Id == id);
+            return _context.Users.FirstOrDefault(u => u.Id == id)!;
         }
     }
 }

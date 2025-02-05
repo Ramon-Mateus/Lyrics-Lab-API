@@ -1,6 +1,6 @@
 ﻿using Lyrics_Lab.Models;
 
-namespace Lyrics_Lab.Data
+namespace Lyrics_Lab.Repositories.Interfaces
 {
     public interface IUserRepository
     {
