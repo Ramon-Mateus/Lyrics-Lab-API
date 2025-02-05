@@ -7,6 +7,7 @@ namespace Lyrics_Lab.Services.Interfaces
     {
         Task<List<Album>> GetAlbums(int userId);
         Task<Album?> GetAlbumById(int userId, int albumId);
+        Task<Album?> GetAlbumById(int userId, bool isDefault);
         Task<Album> CreateAlbum(int userId, CreateAlbumDto createAlbumDto);
         Task<Album?> UpdateAlbum(int userId, int albumId, UpdateAlbumDto updateAlbumDto);
         Task<bool> DeleteAlbum(int userId, int albumId);

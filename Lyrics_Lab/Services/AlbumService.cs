@@ -2,20 +2,22 @@
 using Lyrics_Lab.Models;
 using Lyrics_Lab.Repositories.Interfaces;
 using Lyrics_Lab.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Lyrics_Lab.Services
 {
     public class AlbumService : IAlbumService
     {
         private readonly IAlbumRepository _albumRepository;
-        private readonly ISongService _songService;
+        private readonly IServiceProvider _serviceProvider;
+        private ISongService? _songService;
 
-        public AlbumService(IAlbumRepository albumRepository, ISongService songService)
+        public AlbumService(IAlbumRepository albumRepository, IServiceProvider serviceProvider)
         {
             _albumRepository = albumRepository;
-            _songService = songService;
+            _serviceProvider = serviceProvider;
         }
+
+        private ISongService SongService => _songService ??= _serviceProvider.GetRequiredService<ISongService>();
 
         public async Task<List<Album>> GetAlbums(int userId)
         {
@@ -25,6 +27,11 @@ namespace Lyrics_Lab.Services
         public async Task<Album?> GetAlbumById(int userId, int albumId)
         {
             return await _albumRepository.GetAlbumById(userId, albumId);
+        }
+
+        public async Task<Album?> GetAlbumById(int userId, bool isDefault)
+        {
+            return await _albumRepository.GetAlbumById(userId, isDefault);
         }
 
         public async Task<Album> CreateAlbum(int userId, CreateAlbumDto createAlbumDto)
@@ -41,7 +48,7 @@ namespace Lyrics_Lab.Services
             {
                 foreach (var songId in createAlbumDto.SongIds)
                 {
-                    var song = await _songService.GetSongById(userId, songId);
+                    var song = await SongService.GetSongById(userId, songId);
                     if (song != null) album.Songs.Add(song);
                 }
             }
@@ -82,7 +89,7 @@ namespace Lyrics_Lab.Services
 
                 foreach (var songId in updateAlbumDto.SongIds)
                 {
-                    var song = await _songService.GetSongById(userId, songId);
+                    var song = await SongService.GetSongById(userId, songId);
                     if (song != null) album.Songs.Add(song);
                 }
             }

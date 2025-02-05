@@ -26,6 +26,13 @@ namespace Lyrics_Lab.Repositories
                 .FirstOrDefaultAsync(a => a.Id == albumId && a.UserId == userId);
         }
 
+        public async Task<Album?> GetAlbumById(int userId, bool isDefault)
+        {
+            return await _context.Albums
+                .Include(a => a.Songs)
+                .FirstOrDefaultAsync(a => a.UserId == userId && a.IsDefault == isDefault);
+        }
+
         public async Task<Album> CreateAlbum(Album album)
         {
             await _context.Albums.AddAsync(album);
