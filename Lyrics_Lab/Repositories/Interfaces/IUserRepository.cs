@@ -7,5 +7,6 @@ namespace Lyrics_Lab.Repositories.Interfaces
         User Create(User user);
         User GetByEmail(string email);
         User GetById(int id);
+        Task UpdateUser(User user);
     }
 }

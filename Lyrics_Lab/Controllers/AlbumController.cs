@@ -122,47 +122,5 @@ namespace Lyrics_Lab.Controllers
 
             return NoContent();
         }
-        
-        [HttpPut("user/{Id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
-            var userId = User.FindFirstValue("iss");
-
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "Usuário não autenticado." });
-            }
-            
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-            if (user == null)
-            {
-                return NotFound("Usuário não encontrado");
-            }
-            
-            if (!string.IsNullOrEmpty(updateUserDto.Name))
-            {
-                user.Name = updateUserDto.Name;
-            }
-            
-            if (!string.IsNullOrEmpty(updateUserDto.Email))
-            {
-                user.Email = updateUserDto.Email;
-            }
-            
-            if (!string.IsNullOrEmpty(updateUserDto.Password))
-            {
-                user.Password = BCrypt.Net.BCrypt.HashPassword(updateUserDto.Password);
-            }
-            
-            await _context.SaveChangesAsync();
-            
-            return NoContent();
-        }
     }
 }

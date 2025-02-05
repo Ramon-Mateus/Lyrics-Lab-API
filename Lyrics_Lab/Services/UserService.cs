@@ -1,9 +1,11 @@
 ﻿using Lyrics_Lab.DTOs;
 using Lyrics_Lab.Helpers;
 using Lyrics_Lab.Models;
+using Lyrics_Lab.Repositories;
 using Lyrics_Lab.Repositories.Interfaces;
 using Lyrics_Lab.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Lyrics_Lab.Services
 {
@@ -74,6 +76,42 @@ namespace Lyrics_Lab.Services
         {
             response.Cookies.Delete("jwt");
             return new OkObjectResult(new { message = "Success" });
+        }
+
+        public async Task<IActionResult> UpdateUser(int id, UpdateUserDto updateUserDto, ClaimsPrincipal userClaims)
+        {
+            var userId = userClaims.FindFirstValue("iss");
+
+            if (userId == null)
+            {
+                return new UnauthorizedObjectResult(new { message = "Usuário não autenticado." });
+            }
+
+            var user = _repository.GetById(id);
+
+            if (user == null)
+            {
+                return new NotFoundObjectResult("Usuário não encontrado");
+            }
+
+            if (!string.IsNullOrEmpty(updateUserDto.Name))
+            {
+                user.Name = updateUserDto.Name;
+            }
+
+            if (!string.IsNullOrEmpty(updateUserDto.Email))
+            {
+                user.Email = updateUserDto.Email;
+            }
+
+            if (!string.IsNullOrEmpty(updateUserDto.Password))
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(updateUserDto.Password);
+            }
+
+            await _repository.UpdateUser(user);
+
+            return new NoContentResult();
         }
     }
 }

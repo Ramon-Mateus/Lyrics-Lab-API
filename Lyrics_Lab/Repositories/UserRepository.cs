@@ -41,5 +41,11 @@ namespace Lyrics_Lab.Repositories
         {
             return _context.Users.FirstOrDefault(u => u.Id == id)!;
         }
+
+        public async Task UpdateUser(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
     }
 }
