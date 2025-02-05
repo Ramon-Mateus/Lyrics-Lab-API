@@ -1,6 +1,8 @@
 ﻿using Lyrics_Lab.Contexts;
 using Lyrics_Lab.DTOs;
 using Lyrics_Lab.Models;
+using Lyrics_Lab.Repositories.Interfaces;
+using Lyrics_Lab.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +16,16 @@ namespace Lyrics_Lab.Controllers
     public class AlbumController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAlbumService _albumService;
 
-        public AlbumController(ApplicationDbContext applicationDbContext) => _context = applicationDbContext;
+        public AlbumController(ApplicationDbContext applicationDbContext, IAlbumService albumService)
+        {
+            _context = applicationDbContext;
+            _albumService = albumService;
+        }
 
         [HttpGet]
-        public IActionResult GetAllAlbums()
+        public async Task<IActionResult> GetAllAlbums()
         {
             var userId = User.FindFirstValue("iss");
 
@@ -27,16 +34,13 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var albums = _context.Albums
-                .Where(a => a.UserId == int.Parse(userId))
-                .Include(a =>a.Songs)
-                .ToList();
+            var albums = await _albumService.GetAlbums(int.Parse(userId));
 
             return Ok(albums);
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetAlbumById(int id)
+        public async Task<IActionResult> GetAlbumById(int id)
         {
             var userId = User.FindFirstValue("iss");
 
@@ -45,9 +49,7 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var album = _context.Albums
-                .Include(a => a.Songs)
-                .FirstOrDefault(a => a.Id == id && a.UserId == int.Parse(userId));
+            var album = await _albumService.GetAlbumById(int.Parse(userId), id);
 
             if (album == null)
             {
@@ -72,25 +74,7 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado."});
             }
 
-            var album = new Album
-            {
-                Name = createAlbumDto.Name,
-                Description = createAlbumDto.Description,
-                Image = createAlbumDto.Image,
-                UserId = int.Parse(userId)
-            };
-
-            if (createAlbumDto.SongIds != null) {
-                foreach (var songId in createAlbumDto.SongIds)
-                {
-                    var song = await _context.Songs.FirstOrDefaultAsync(s =>
-                        s.Id == songId && s.Albums.Any(a => a.UserId == int.Parse(userId)));
-                    if (song != null) album.Songs.Add(song);
-                }
-            }
-
-            _context.Albums.Add(album);
-            await _context.SaveChangesAsync();
+            var album = await _albumService.CreateAlbum(int.Parse(userId), createAlbumDto);
 
             return CreatedAtAction(nameof(GetAlbumById), new { id = album.Id }, album);
         }
@@ -109,47 +93,14 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var album = await _context.Albums
-                .Include(a => a.Songs)
-                .FirstOrDefaultAsync(a => a.Id == id && a.UserId == int.Parse(userId));
+            var album = await _albumService.UpdateAlbum(int.Parse(userId), id, updateAlbumDto);
 
-            if (album == null || album.IsDefault == true)
+            if(album == null)
             {
-                return NotFound();
+                return NotFound(new { messsage = "Album não encontrado" });
             }
 
-            if (!string.IsNullOrEmpty(updateAlbumDto.Name))
-            {
-                album.Name = updateAlbumDto.Name;
-            }
-
-            album.Description = !string.IsNullOrEmpty(updateAlbumDto.Description) ? updateAlbumDto.Description : null;
-            album.Image = !string.IsNullOrEmpty(updateAlbumDto.Image) ? updateAlbumDto.Image : null;
-            
-            if (updateAlbumDto?.SongIds != null)
-            {
-                foreach (var song in album.Songs.ToList())
-                {
-                    if (!updateAlbumDto.SongIds.Contains(song.Id))
-                    {
-                        album.Songs.Remove(song);
-                    }
-                    else
-                    {
-                        updateAlbumDto.SongIds.Remove(song.Id);
-                    }
-                }
-
-                foreach (var songId in updateAlbumDto.SongIds)
-                {
-                    var song = await _context.Songs.FirstOrDefaultAsync(s => s.Id == songId && s.Albums.Any(a => a.UserId == int.Parse(userId)));
-                    if(song != null) album.Songs.Add(song);
-                }
-            }
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok(album);
         }
 
         [HttpDelete("{Id}")]
@@ -162,58 +113,13 @@ namespace Lyrics_Lab.Controllers
                 return Unauthorized(new { message = "Usuário não autenticado." });
             }
 
-            var album = await _context.Albums.FirstOrDefaultAsync(a => a.Id == id && a.UserId == int.Parse(userId));
+            var result = await _albumService.DeleteAlbum(int.Parse(userId), id);
 
-            if (album == null || album.IsDefault == true)
+            if(!result)
             {
-                return NotFound();
+                return NotFound(new { message = "Album não encontrado" });
             }
 
-            _context.Albums.Remove(album);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-        
-        [HttpPut("user/{Id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
-            var userId = User.FindFirstValue("iss");
-
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "Usuário não autenticado." });
-            }
-            
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-            if (user == null)
-            {
-                return NotFound("Usuário não encontrado");
-            }
-            
-            if (!string.IsNullOrEmpty(updateUserDto.Name))
-            {
-                user.Name = updateUserDto.Name;
-            }
-            
-            if (!string.IsNullOrEmpty(updateUserDto.Email))
-            {
-                user.Email = updateUserDto.Email;
-            }
-            
-            if (!string.IsNullOrEmpty(updateUserDto.Password))
-            {
-                user.Password = BCrypt.Net.BCrypt.HashPassword(updateUserDto.Password);
-            }
-            
-            await _context.SaveChangesAsync();
-            
             return NoContent();
         }
     }
