@@ -12,11 +12,8 @@ using Lyrics_Lab.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=todos.sqlite3"));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddHttpContextAccessor();
 
@@ -33,17 +30,15 @@ builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowSpecificOrigins", policy =>
   {
-    policy.WithOrigins("http://localhost:3000") // Replace with your allowed origins
+    policy.WithOrigins("http://localhost:3000")
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials(); // Needed if you're using cookies or authorization headers
+            .AllowCredentials();
   });
 });
 
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
-//builder.Services.AddControllers();
 
 builder.Services.AddSingleton<JwtService>();
 
@@ -77,14 +72,12 @@ builder.Services.AddAuthentication(options =>
   };
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger();
