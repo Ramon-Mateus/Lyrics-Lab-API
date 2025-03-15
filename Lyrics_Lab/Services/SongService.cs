@@ -35,7 +35,8 @@ namespace Lyrics_Lab.Services
                 Lyric = createSongDto.Lyric,
                 Tone = createSongDto.Tone,
                 Compass = createSongDto.Compass,
-                Bpm = createSongDto.Bpm
+                Bpm = createSongDto.Bpm,
+                Sustenido = createSongDto.Sustenido
             };
 
             if (createSongDto.AlbumIds != null && createSongDto.AlbumIds.Count > 0)
@@ -75,6 +76,7 @@ namespace Lyrics_Lab.Services
             song.Tone = !string.IsNullOrEmpty(updateSongDto.Tone) ? updateSongDto.Tone : null;
             song.Compass = !string.IsNullOrEmpty(updateSongDto.Compass) ? updateSongDto.Compass : null;
             song.Bpm = updateSongDto.Bpm;
+            song.Sustenido = updateSongDto.Sustenido;
 
             if (updateSongDto?.AlbumIds != null)
             {

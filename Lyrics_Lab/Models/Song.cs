@@ -10,6 +10,7 @@ namespace Lyrics_Lab.Models
         public string? Tone { get; set; } = null;
         public string? Compass { get; set; } = null;
         public float? Bpm { get; set; } = null;
+        public bool? Sustenido { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public List<Album> Albums { get; set; } = new List<Album>();
     }

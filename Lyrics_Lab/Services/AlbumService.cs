@@ -70,8 +70,15 @@ namespace Lyrics_Lab.Services
                 album.Name = updateAlbumDto.Name;
             }
 
-            album.Description = !string.IsNullOrEmpty(updateAlbumDto.Description) ? updateAlbumDto.Description : null;
-            album.Image = !string.IsNullOrEmpty(updateAlbumDto.Image) ? updateAlbumDto.Image : null;
+            if(!string.IsNullOrEmpty(updateAlbumDto.Description))
+            {
+                album.Description = updateAlbumDto.Description;
+            }
+
+            if(!string.IsNullOrEmpty(updateAlbumDto.Image))
+            {
+                album.Image = updateAlbumDto.Image;
+            }
 
             if (updateAlbumDto?.SongIds != null)
             {

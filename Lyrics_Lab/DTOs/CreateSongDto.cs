@@ -11,6 +11,7 @@ namespace Lyrics_Lab.DTOs
         public string? Tone { get; set; }
         public float? Bpm { get; set; }
         public string? Compass { get; set; }
+        public bool? Sustenido { get; set; }
         public List<int>? AlbumIds { get; set; } = new List<int>();
     }
 }
