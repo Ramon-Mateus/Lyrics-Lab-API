@@ -29,6 +29,12 @@ builder.Services.AddScoped<ISongService, SongService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowSpecificOrigins", policy =>
