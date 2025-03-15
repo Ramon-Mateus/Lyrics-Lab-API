@@ -366,4 +366,8 @@ FodyWeavers.xsd
 /.idea/.idea.Lyrics_Lab/.idea
 
 # Ignore migrations
-**/Migrations/*
+Migrations/
+/.idea
+
+# V�riaveis de ambiente
+.env

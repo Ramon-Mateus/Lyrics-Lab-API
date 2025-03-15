@@ -8,12 +8,15 @@ using Lyrics_Lab.Repositories.Interfaces;
 using Lyrics_Lab.Repositories;
 using Lyrics_Lab.Services;
 using Lyrics_Lab.Services.Interfaces;
-
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+Env.Load();
+
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddHttpContextAccessor();
 
@@ -30,7 +33,7 @@ builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowSpecificOrigins", policy =>
   {
-    policy.WithOrigins("http://localhost:3000")
+    policy.WithOrigins(Environment.GetEnvironmentVariable("CORS_ORIGIN")!)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
