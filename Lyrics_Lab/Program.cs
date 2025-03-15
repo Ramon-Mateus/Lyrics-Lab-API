@@ -8,15 +8,15 @@ using Lyrics_Lab.Repositories.Interfaces;
 using Lyrics_Lab.Repositories;
 using Lyrics_Lab.Services;
 using Lyrics_Lab.Services.Interfaces;
-
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+Env.Load();
 
-//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=todos.sqlite3"));
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddHttpContextAccessor();
 
@@ -33,17 +33,15 @@ builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowSpecificOrigins", policy =>
   {
-    policy.WithOrigins("http://localhost:3000") // Replace with your allowed origins
+    policy.WithOrigins(Environment.GetEnvironmentVariable("CORS_ORIGIN")!)
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials(); // Needed if you're using cookies or authorization headers
+            .AllowCredentials();
   });
 });
 
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
-//builder.Services.AddControllers();
 
 builder.Services.AddSingleton<JwtService>();
 
@@ -77,14 +75,12 @@ builder.Services.AddAuthentication(options =>
   };
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger();
