@@ -50,6 +50,8 @@ namespace Lyrics_Lab.Services
             httpContext?.Response.Cookies.Append("jwt", jwt, new CookieOptions
             {
                 HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7)
             });
 
