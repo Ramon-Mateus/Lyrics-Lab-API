@@ -9,6 +9,9 @@ using Lyrics_Lab.Repositories;
 using Lyrics_Lab.Services;
 using Lyrics_Lab.Services.Interfaces;
 using DotNetEnv;
+using Lyrics_Lab.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,35 +54,49 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 
 builder.Services.AddSingleton<JwtService>();
 
-builder.Services.AddAuthentication(options =>
-{
-  options.DefaultAuthenticateScheme = "JwtBearer";
-  options.DefaultChallengeScheme = "JwtBearer";
-}).AddJwtBearer("JwtBearer", configureOptions =>
-{
-  configureOptions.TokenValidationParameters = new TokenValidationParameters
-  {
-    ValidateIssuerSigningKey = true,
-    IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
-    {
-      var jwtService = builder.Services.BuildServiceProvider().GetService<JwtService>();
-      return new[] { jwtService.GetSymmetricSecurityKey() };
-    },
-    ValidateIssuer = false,
-    ValidateAudience = false,
-    ValidateLifetime = true,
-    ClockSkew = TimeSpan.Zero
-  };
+builder.Services.AddIdentity<User, IdentityRole<int>>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
-  configureOptions.Events = new JwtBearerEvents
-  {
-    OnMessageReceived = context =>
-    {
-      context.Token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-      return Task.CompletedTask;
-    }
-  };
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
+
+// Update the registration of EmailService to match the expected interface
+// builder.Services.AddTransient<IEmailSender, EmailService>();
+//builder.Services.AddTransient<IEmailSender<IdentityUser>, EmailService>();
+
+//builder.Services.AddAuthentication(options =>
+//{
+//  options.DefaultAuthenticateScheme = "JwtBearer";
+//  options.DefaultChallengeScheme = "JwtBearer";
+//}).AddJwtBearer("JwtBearer", configureOptions =>
+//{
+//  configureOptions.TokenValidationParameters = new TokenValidationParameters
+//  {
+//    ValidateIssuerSigningKey = true,
+//    IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
+//    {
+//      var jwtService = builder.Services.BuildServiceProvider().GetService<JwtService>();
+//      return new[] { jwtService.GetSymmetricSecurityKey() };
+//    },
+//    ValidateIssuer = false,
+//    ValidateAudience = false,
+//    ValidateLifetime = true,
+//    ClockSkew = TimeSpan.Zero
+//  };
+
+//  configureOptions.Events = new JwtBearerEvents
+//  {
+//    OnMessageReceived = context =>
+//    {
+//      context.Token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+//      return Task.CompletedTask;
+//    }
+//  };
+//});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -101,5 +118,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//app.MapIdentityApi<IdentityUser>();
 
 app.Run();

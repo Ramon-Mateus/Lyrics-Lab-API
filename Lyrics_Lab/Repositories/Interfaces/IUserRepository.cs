@@ -4,9 +4,9 @@ namespace Lyrics_Lab.Repositories.Interfaces
 {
     public interface IUserRepository
     {
-        User Create(User user);
-        User GetByEmail(string email);
-        User GetById(int id);
-        Task UpdateUser(User user);
+        //User Create(User user);
+        //User GetByEmail(string email);
+        //User GetById(int id);
+        //Task UpdateUser(User user);
     }
 }

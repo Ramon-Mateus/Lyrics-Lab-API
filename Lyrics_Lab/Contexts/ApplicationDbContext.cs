@@ -1,19 +1,22 @@
 ﻿using Lyrics_Lab.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lyrics_Lab.Contexts
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
 
         public DbSet<Album> Albums => Set<Album>();
         public DbSet<Song> Songs => Set<Song>();
-        public DbSet<User> Users => Set<User>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<User>(entity => { entity.HasIndex(e => e.Email).IsUnique(); });
 
             modelBuilder.Entity<Album>()

@@ -17,10 +17,10 @@ namespace Lyrics_Lab.Controllers
             _userService = userService;
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
-        {
-            return await _userService.UpdateUser(id, updateUserDto, User);
-        }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
+        //{
+        //    return await _userService.UpdateUser(id, updateUserDto, User);
+        //}
     }
 }

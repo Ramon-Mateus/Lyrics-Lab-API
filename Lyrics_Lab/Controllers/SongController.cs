@@ -25,7 +25,7 @@ namespace Lyrics_Lab.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllSongs()
         {
-            var userId = User.FindFirstValue("iss");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
@@ -40,7 +40,7 @@ namespace Lyrics_Lab.Controllers
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetSongById(int id)
         {
-            var userId = User.FindFirstValue("iss");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
@@ -65,7 +65,7 @@ namespace Lyrics_Lab.Controllers
                 return BadRequest(ModelState);
             }
 
-            var userId = User.FindFirstValue("iss");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
@@ -90,7 +90,7 @@ namespace Lyrics_Lab.Controllers
                 return BadRequest(ModelState);
             }
 
-            var userId = User.FindFirstValue("iss");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
@@ -110,7 +110,7 @@ namespace Lyrics_Lab.Controllers
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteSong(int id)
         {
-            var userId = User.FindFirstValue("iss");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
