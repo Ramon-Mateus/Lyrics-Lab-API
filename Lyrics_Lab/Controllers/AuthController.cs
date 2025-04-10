@@ -44,5 +44,31 @@ namespace Lyrics_Lab.Controllers
         {
             return _userService.Logout(Response);
         }
+
+        [HttpGet("verify-session")]
+        public IActionResult VerifySession()
+        {
+            try
+            {
+                if (!Request.Cookies.TryGetValue("jwt", out var jwt))
+                {
+                    return Unauthorized(new { message = "No session found" });
+                }
+
+                var token = _jwtService.Verify(jwt);
+                int userId = int.Parse(token.Issuer);
+
+                return Ok(new
+                {
+                    isValid = true,
+                    userId = userId,
+                    expires = token.ValidTo
+                });
+            }
+            catch
+            {
+                return Unauthorized(new { message = "Invalid session" });
+            }
+        }
     }
 }
