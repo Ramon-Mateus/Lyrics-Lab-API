@@ -39,7 +39,7 @@ builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowSpecificOrigins", policy =>
   {
-    policy.WithOrigins(Environment.GetEnvironmentVariable("CORS_ORIGIN")!)
+    policy.WithOrigins(Environment.GetEnvironmentVariable("CORS_ORIGIN")!.Split(';', StringSplitOptions.RemoveEmptyEntries))
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
