@@ -77,7 +77,15 @@ namespace Lyrics_Lab.Services
 
         public IActionResult Logout(HttpResponse response)
         {
-            response.Cookies.Delete("jwt");
+            var cookieOptions = new CookieOptions
+            {
+                Secure = true,
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(-1)
+            };
+
+            response.Cookies.Delete("jwt", cookieOptions);
             return new OkObjectResult(new { message = "Success" });
         }
 
