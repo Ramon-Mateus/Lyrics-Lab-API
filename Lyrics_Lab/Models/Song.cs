@@ -11,7 +11,7 @@ namespace Lyrics_Lab.Models
         public string? Compass { get; set; } = null;
         public float? Bpm { get; set; } = null;
         public bool? Sustenido { get; set; } = true;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public List<Album> Albums { get; set; } = new List<Album>();
     }
 }
