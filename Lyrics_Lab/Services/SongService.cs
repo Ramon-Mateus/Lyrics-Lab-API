@@ -78,7 +78,7 @@ namespace Lyrics_Lab.Services
             song.Bpm = updateSongDto.Bpm;
             song.Sustenido = updateSongDto.Sustenido;
 
-            if (updateSongDto?.AlbumIds != null)
+            if (updateSongDto?.AlbumIds != null && updateSongDto?.AlbumIds?.Count != 0)
             {
                 var albums = await _albumService.GetAlbums(userId);
 
