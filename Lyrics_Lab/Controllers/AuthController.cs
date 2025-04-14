@@ -29,7 +29,7 @@ namespace Lyrics_Lab.Controllers
         public IActionResult Login(LoginDto dto)
         {
             var result = _userService.Login(dto);
-            return Ok(result);
+            return result;
         }
 
         [HttpGet("user")]
